@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist de Recebimento</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f6f8;color:#17212b}
+header{background:#1f2937;color:#fff;padding:18px 22px;position:sticky;top:0;z-index:5}
+header h1{margin:0 0 5px;font-size:22px}header p{margin:0;color:#d1d5db;font-size:13px}
+nav{display:flex;gap:8px;padding:12px;background:#fff;border-bottom:1px solid #ddd;position:sticky;top:78px;z-index:4;overflow:auto}
+nav button,.btn{border:0;border-radius:8px;padding:10px 14px;cursor:pointer;font-weight:700;background:#e5e7eb;color:#111827;white-space:nowrap}
+nav button.active,.btn.primary{background:#2563eb;color:#fff}.btn.success{background:#16a34a;color:#fff}.btn.danger{background:#dc2626;color:#fff}.btn.small{padding:7px 10px;font-size:12px}
+.btn.finalize{width:100%;font-size:18px;padding:17px 20px;background:#0f766e;color:#fff;box-shadow:0 6px 18px #0f766e33}.btn.finalize:hover{background:#115e59}
+main{max-width:1180px;margin:20px auto;padding:0 16px}.page{display:none}.page.active{display:block}
+.card{background:#fff;border:1px solid #e1e5e9;border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 2px #0000000b}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px;color:#4b5563}
+input,select{width:100%;padding:11px;border:1px solid #cfd5db;border-radius:8px;font-size:14px;background:#fff}
+.tablewrap{overflow:auto}.items{width:100%;border-collapse:collapse;min-width:650px}.items th,.items td{padding:9px;border-bottom:1px solid #eee;text-align:left;font-size:13px}.items th{background:#f8fafc}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{background:#fff;border:1px solid #e1e5e9;border-radius:12px;padding:15px}.stat b{display:block;font-size:25px;margin-top:5px}.muted{color:#6b7280;font-size:12px}
+.empty{text-align:center;padding:35px;color:#6b7280}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.right{text-align:right}
+.badge{display:inline-block;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:700;background:#e5e7eb}.badge.okbg{background:#dcfce7;color:#166534}.badge.warnbg{background:#fef3c7;color:#92400e}.badge.badbg{background:#fee2e2;color:#991b1b}.badge.graybg{background:#e5e7eb;color:#374151}
+
+.receive-full{background:#fff;border-radius:0;min-height:calc(100vh - 145px);border:1px solid #e1e5e9;box-shadow:0 1px 3px #0000000b;overflow:hidden}
+.receive-header{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:20px 24px;background:#111827;color:#fff}
+.receive-header h2{margin:0 0 5px;font-size:24px}.receive-subtitle{font-size:13px;color:#d1d5db}.receive-counter{font-size:20px;font-weight:800;background:#374151;padding:10px 16px;border-radius:10px;white-space:nowrap}
+.purchase-strip{display:flex;gap:10px;padding:14px 18px;border-bottom:1px solid #e5e7eb;background:#f8fafc;overflow:auto}.purchase-card{min-width:240px;border:2px solid #d1d5db;border-radius:10px;background:#fff;padding:12px;cursor:pointer}.purchase-card.active{border-color:#2563eb;background:#eff6ff}.purchase-card b{display:block;margin-bottom:4px}.purchase-card span{font-size:12px;color:#6b7280}
+.receive-list{padding:0 24px}.receive-item{display:grid;grid-template-columns:minmax(220px,1fr) 130px 180px 1fr;gap:18px;align-items:center;padding:18px 0;border-bottom:1px solid #e5e7eb}.receive-item-name{font-size:17px;font-weight:800}.receive-qty{font-size:14px;color:#4b5563}.receive-check{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:800}.receive-check input{width:28px;height:28px;cursor:pointer}.receive-status{font-size:14px;font-weight:800}.ok{color:#15803d}.pending{color:#b45309}.receive-actions{display:flex;gap:10px;flex-wrap:wrap;padding:20px 24px;background:#f8fafc;border-top:1px solid #e5e7eb}.receive-empty{text-align:center;padding:70px 20px;color:#6b7280}.receive-summary{margin:18px 24px;padding:16px 18px;border-radius:10px;background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46}.receive-summary b{display:block;font-size:16px;margin-bottom:5px}.receive-note{padding:0 24px 18px;color:#6b7280;font-size:12px}
+
+.dashboard-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}.dash-card{background:#fff;border:1px solid #e1e5e9;border-radius:12px;padding:16px}.dash-card .label{font-size:12px;color:#6b7280;font-weight:700}.dash-card .number{font-size:31px;font-weight:900;margin:5px 0}.dash-card .sub{font-size:12px;color:#6b7280}
+.dashboard-two{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}.chart-card{background:#fff;border:1px solid #e1e5e9;border-radius:12px;padding:18px;margin-bottom:16px}.chart-card h3{margin:0 0 16px}.bar-row{display:grid;grid-template-columns:145px 1fr 56px;gap:12px;align-items:center;margin:14px 0}.bar-label{font-size:13px;font-weight:700}.bar-track{height:22px;background:#eef2f7;border-radius:999px;overflow:hidden}.bar-fill{height:100%;border-radius:999px;min-width:0}.bar-fill.blue{background:#2563eb}.bar-fill.green{background:#16a34a}.bar-fill.orange{background:#f59e0b}.bar-fill.red{background:#dc2626}.bar-value{text-align:right;font-weight:800}
+.status-list{display:grid;gap:10px}.status-item{display:flex;justify-content:space-between;gap:12px;align-items:center;border:1px solid #e5e7eb;border-radius:10px;padding:12px}.status-item strong{display:block;font-size:14px}.status-item small{color:#6b7280}.progress{height:8px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin-top:8px}.progress>span{display:block;height:100%;background:#16a34a}.manager-table{width:100%;border-collapse:collapse;min-width:760px}.manager-table th,.manager-table td{padding:11px;border-bottom:1px solid #eee;text-align:left;font-size:13px}.manager-table th{background:#f8fafc}.late{color:#b91c1c;font-weight:800}.ontime{color:#15803d;font-weight:800}.done{color:#1d4ed8;font-weight:800}
+.receipt-log{margin-top:12px;border-top:1px dashed #d1d5db;padding-top:10px}.receipt-log div{font-size:12px;color:#4b5563;margin:4px 0}
+@media(max-width:850px){.grid,.stats,.dashboard-grid{grid-template-columns:1fr 1fr}.dashboard-two{grid-template-columns:1fr}.receive-item{grid-template-columns:1fr 90px;gap:8px;padding:16px 0}.receive-item .receive-check{grid-column:2;grid-row:1/3}.receive-item .receive-status{grid-column:1}.receive-item .obs{grid-column:1/-1}.receive-actions{padding:16px}.receive-header{padding:16px}.receive-header h2{font-size:19px}.receive-counter{font-size:16px;padding:8px 10px}.receive-list{padding:0 14px}.bar-row{grid-template-columns:110px 1fr 45px}}
+@media(max-width:560px){.grid,.stats,.dashboard-grid{grid-template-columns:1fr}header{position:relative}nav{position:sticky;top:0}.receive-header{align-items:flex-start;flex-direction:column}.receive-summary{margin:14px}.bar-row{grid-template-columns:90px 1fr 40px}}
+</style>
+</head>
+<body>
+<header><h1>📦 Checklist de Recebimento</h1><p>Controle simples de compras, entregas e pendências do restaurante</p></header>
+<nav>
+<button id="tabCompra" class="active" onclick="showPage('compra')">🛒 Nova compra</button>
+<button id="tabReceb" onclick="showPage('recebimento')">✅ Recebimento</button>
+<button id="tabDashboard" onclick="showPage('dashboard')">📊 Dashboard</button>
+<button id="tabHistorico" onclick="showPage('historico')">📋 Histórico</button>
+</nav>
+<main>
+<section id="compra" class="page active">
+<div class="card"><h2>1. Cadastrar compra</h2><div class="grid">
+<div class="field"><label>Fornecedor</label><input id="fornecedor" placeholder="Ex.: Distribuidora ABC"></div>
+<div class="field"><label>Data da compra</label><input id="dataCompra" type="date"></div>
+<div class="field"><label>Data prevista</label><input id="dataPrevista" type="date"></div>
+<div class="field"><label>Responsável</label><input id="responsavel" placeholder="Nome"></div>
+</div></div>
+<div class="card"><h3>Produtos comprados</h3><div class="tablewrap"><table class="items"><thead><tr><th>Produto</th><th>Quantidade</th><th>Unidade</th><th></th></tr></thead><tbody id="produtoRows"></tbody></table></div><div class="actions"><button class="btn" onclick="addProduct()">+ Adicionar produto</button><button class="btn primary" onclick="savePurchase()">Salvar compra</button></div></div>
+</section>
+
+<section id="recebimento" class="page">
+<div class="receive-full"><div class="receive-header"><div><h2>📦 Recebimento de Mercadorias</h2><div id="receiveSupplier" class="receive-subtitle">Selecione uma compra abaixo para iniciar a conferência</div></div><div class="receive-counter" id="receiveCounter">0 / 0</div></div><div class="purchase-strip" id="purchaseStrip"></div><div id="receivingBox"></div></div>
+</section>
+
+<section id="dashboard" class="page">
+<div class="dashboard-grid">
+<div class="dash-card"><div class="label">TOTAL DE COMPRAS</div><div class="number" id="dbCompras">0</div><div class="sub">pedidos cadastrados</div></div>
+<div class="dash-card"><div class="label">ITENS COMPRADOS</div><div class="number" id="dbItens">0</div><div class="sub">itens no total</div></div>
+<div class="dash-card"><div class="label">ITENS RECEBIDOS</div><div class="number" id="dbRecebidos">0</div><div class="sub" id="dbPct">0% do total</div></div>
+<div class="dash-card"><div class="label">ITENS PENDENTES</div><div class="number" id="dbPendentes">0</div><div class="sub">ainda aguardando entrega</div></div>
+</div>
+<div class="dashboard-two">
+<div class="chart-card"><h3>Visão geral dos itens</h3><div id="itemsChart"></div></div>
+<div class="chart-card"><h3>Prazo das compras</h3><div id="deadlineChart"></div></div>
+</div>
+<div class="chart-card"><h3>Visão gerencial por compra</h3><div class="tablewrap"><table class="manager-table"><thead><tr><th>Fornecedor</th><th>Previsão</th><th>Recebido</th><th>Pendente</th><th>Progresso</th><th>Status</th></tr></thead><tbody id="managerBody"></tbody></table></div></div>
+</section>
+
+<section id="historico" class="page">
+<div class="stats"><div class="stat"><span class="muted">Compras</span><b id="stCompras">0</b></div><div class="stat"><span class="muted">Itens comprados</span><b id="stItens">0</b></div><div class="stat"><span class="muted">Recebidos</span><b id="stRecebidos">0</b></div><div class="stat"><span class="muted">Pendências</span><b id="stPendencias">0</b></div></div>
+<div class="card" style="margin-top:16px"><h2>Histórico</h2><div id="historyBox"></div></div>
+</section>
+</main>
+<script>
+let data=JSON.parse(localStorage.getItem('restaurantReceiving')||'[]');
+let currentPurchaseId=null;
+const localNow=new Date();
+const today=`${localNow.getFullYear()}-${String(localNow.getMonth()+1).padStart(2,'0')}-${String(localNow.getDate()).padStart(2,'0')}`;
+document.getElementById('dataCompra').value=today;
+
+// Migra dados de versões antigas sem apagar o histórico existente.
+data=data.map(x=>({...x,receipts:Array.isArray(x.receipts)?x.receipts:[],products:(x.products||[]).map(p=>({...p,status:p.status==='recebido'?'recebido':'pendente',obs:p.obs||''}))}));
+persist();
+
+function persist(){localStorage.setItem('restaurantReceiving',JSON.stringify(data));}
+function showPage(p){
+ document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(p).classList.add('active');
+ document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+ const ids={compra:'tabCompra',recebimento:'tabReceb',dashboard:'tabDashboard',historico:'tabHistorico'};document.getElementById(ids[p]).classList.add('active');
+ if(p==='recebimento')renderSelect();if(p==='historico')renderHistory();if(p==='dashboard')renderDashboard();
+}
+function addProduct(name='',qty='',unit='un'){
+ const tr=document.createElement('tr');tr.innerHTML=`<td><input class="pn" placeholder="Nome do produto" value="${esc(name)}"></td><td><input class="pq" type="number" min="0" step="0.01" placeholder="0" value="${qty}"></td><td><select class="pu"><option ${unit==='un'?'selected':''}>un</option><option ${unit==='kg'?'selected':''}>kg</option><option ${unit==='g'?'selected':''}>g</option><option ${unit==='L'?'selected':''}>L</option><option ${unit==='cx'?'selected':''}>cx</option><option ${unit==='pct'?'selected':''}>pct</option><option ${unit==='fardo'?'selected':''}>fardo</option></select></td><td><button class="btn danger small" onclick="this.closest('tr').remove()">Excluir</button></td>`;document.getElementById('produtoRows').appendChild(tr);
+}
+function esc(s){return String(s??'').replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;').replaceAll('>','&gt;')}
+addProduct();addProduct();addProduct();
+
+function savePurchase(){
+ const fornecedor=document.getElementById('fornecedor').value.trim();if(!fornecedor){alert('Informe o fornecedor.');return}
+ const rows=[...document.querySelectorAll('#produtoRows tr')].map(r=>({name:r.querySelector('.pn').value.trim(),qty:r.querySelector('.pq').value,unit:r.querySelector('.pu').value})).filter(x=>x.name&&Number(x.qty)>0);if(!rows.length){alert('Adicione pelo menos um produto com quantidade.');return}
+ const item={id:Date.now(),fornecedor,dataCompra:document.getElementById('dataCompra').value,dataPrevista:document.getElementById('dataPrevista').value,responsavel:document.getElementById('responsavel').value.trim(),products:rows.map(x=>({...x,status:'pendente',obs:''})),receipts:[]};
+ data.unshift(item);persist();alert('Compra cadastrada! Ela já está disponível na tela de Recebimento.');
+ document.getElementById('fornecedor').value='';document.getElementById('dataPrevista').value='';document.getElementById('responsavel').value='';document.getElementById('produtoRows').innerHTML='';addProduct();addProduct();addProduct();showPage('recebimento');
+}
+function renderSelect(){
+ const strip=document.getElementById('purchaseStrip');const pending=data.filter(x=>x.products.some(p=>p.status!=='recebido'));
+ if(!pending.length){strip.innerHTML='';document.getElementById('receivingBox').innerHTML='<div class="receive-empty">🎉 Nenhuma compra com itens pendentes.</div>';document.getElementById('receiveSupplier').textContent='Todas as compras foram recebidas integralmente.';document.getElementById('receiveCounter').textContent='0 / 0';currentPurchaseId=null;return}
+ if(!pending.some(x=>x.id===currentPurchaseId))currentPurchaseId=pending[0].id;
+ strip.innerHTML=pending.map(x=>{const left=x.products.filter(p=>p.status!=='recebido').length;return `<div class="purchase-card ${x.id===currentPurchaseId?'active':''}" onclick="openPurchase(${x.id})"><b>${esc(x.fornecedor)}</b><span>${fmt(x.dataCompra)} • ${left} pendência(s)</span></div>`}).join('');
+ loadReceivingById(currentPurchaseId);
+}
+function loadReceivingById(id){
+ currentPurchaseId=Number(id);const x=data.find(a=>a.id===currentPurchaseId),box=document.getElementById('receivingBox');if(!x){box.innerHTML='';return}
+ const received=x.products.filter(p=>p.status==='recebido').length;const pending=x.products.length-received;
+ document.getElementById('receiveSupplier').innerHTML=`<b>${esc(x.fornecedor)}</b> • Compra ${fmt(x.dataCompra)} ${x.dataPrevista?'• Previsão: '+fmt(x.dataPrevista):''}`;document.getElementById('receiveCounter').textContent=`${received} / ${x.products.length}`;
+ document.querySelectorAll('.purchase-card').forEach((el,i)=>el.classList.toggle('active',data.filter(a=>a.products.some(p=>p.status!=='recebido'))[i]?.id===x.id));
+ const last=x.receipts[x.receipts.length-1];
+ box.innerHTML=`${last?`<div class="receive-summary"><b>Último recebimento finalizado em ${fmtDateTime(last.date)}</b>${last.total} itens comprados → ${last.received} recebidos → ${last.pending} pendentes</div>`:''}<div class="receive-list">${x.products.map((p,i)=>`<div class="receive-item"><div><div class="receive-item-name">${esc(p.name)}</div><div class="receive-qty">Quantidade comprada: <b>${p.qty} ${esc(p.unit)}</b></div></div><div class="receive-check"><input type="checkbox" ${p.status==='recebido'?'checked':''} onchange="toggleItem(${x.id},${i},this.checked)"><span>Recebido</span></div><div class="receive-status ${p.status==='recebido'?'ok':'pending'}">${p.status==='recebido'?'✅ RECEBIDO':'⏳ PENDENTE'}</div><div class="obs"><input placeholder="Observação / divergência (opcional)" value="${esc(p.obs||'')}" onchange="setObs(${x.id},${i},this.value)"></div></div>`).join('')}</div><div class="receive-actions"><button class="btn success" onclick="markAll(${x.id},true)">✓ Marcar todos como recebidos</button><button class="btn" onclick="markAll(${x.id},false)">Limpar marcações pendentes</button><button class="btn finalize" onclick="finalizeReceipt(${x.id})">FINALIZAR RECEBIMENTO</button></div><div class="receive-note">Itens marcados ficam como recebidos. Itens desmarcados continuam pendentes e permanecem disponíveis para uma próxima entrega.</div>`;
+}
+function toggleItem(id,i,checked){const x=data.find(a=>a.id===id);if(!x)return;x.products[i].status=checked?'recebido':'pendente';persist();loadReceivingById(id);renderHistory();renderDashboard();}
+function setObs(id,i,v){const x=data.find(a=>a.id===id);if(!x)return;x.products[i].obs=v;persist();}
+function markAll(id,yes){const x=data.find(a=>a.id===id);if(!x)return;x.products.forEach(p=>p.status=yes?'recebido':'pendente');persist();loadReceivingById(id);renderHistory();renderDashboard();}
+function finalizeReceipt(id){
+ const x=data.find(a=>a.id===id);if(!x)return;const total=x.products.length;const received=x.products.filter(p=>p.status==='recebido').length;const pending=total-received;
+ x.receipts.push({date:new Date().toISOString(),total,received,pending});persist();
+ alert(`Recebimento finalizado!\n\n${total} itens comprados → ${received} recebidos → ${pending} pendentes${pending?'\n\nOs itens pendentes continuarão disponíveis para a próxima entrega.':'\n\nCompra recebida integralmente.'}`);
+ renderHistory();renderDashboard();renderSelect();
+}
+function fmt(d){if(!d)return'—';let [y,m,day]=d.split('-');return `${day}/${m}/${y}`}
+function fmtDateTime(iso){if(!iso)return'';const d=new Date(iso);return d.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});}
+function purchaseStatus(x){const pending=x.products.filter(p=>p.status!=='recebido').length;if(!pending)return {key:'done',label:'Concluída'};if(x.dataPrevista&&x.dataPrevista<today)return {key:'late',label:'Em atraso'};if(x.dataPrevista)return {key:'ontime',label:'No prazo'};return {key:'nodate',label:'Sem previsão'};}
+function totals(){let total=0,rec=0;data.forEach(x=>x.products.forEach(p=>{total++;if(p.status==='recebido')rec++}));return {total,rec,pend:total-rec};}
+
+function renderDashboard(){
+ const t=totals();document.getElementById('dbCompras').textContent=data.length;document.getElementById('dbItens').textContent=t.total;document.getElementById('dbRecebidos').textContent=t.rec;document.getElementById('dbPendentes').textContent=t.pend;document.getElementById('dbPct').textContent=`${t.total?Math.round(t.rec/t.total*100):0}% do total`;
+ const max=Math.max(t.total,t.rec,t.pend,1);document.getElementById('itemsChart').innerHTML=[['Itens comprados',t.total,'blue'],['Recebidos',t.rec,'green'],['Pendentes',t.pend,'orange']].map(([label,value,color])=>`<div class="bar-row"><div class="bar-label">${label}</div><div class="bar-track"><div class="bar-fill ${color}" style="width:${value/max*100}%"></div></div><div class="bar-value">${value}</div></div>`).join('');
+ const counts={done:0,ontime:0,late:0,nodate:0};data.forEach(x=>counts[purchaseStatus(x).key]++);const dmax=Math.max(...Object.values(counts),1);document.getElementById('deadlineChart').innerHTML=[['Concluídas',counts.done,'blue'],['No prazo',counts.ontime,'green'],['Em atraso',counts.late,'red'],['Sem previsão',counts.nodate,'orange']].map(([label,value,color])=>`<div class="bar-row"><div class="bar-label">${label}</div><div class="bar-track"><div class="bar-fill ${color}" style="width:${value/dmax*100}%"></div></div><div class="bar-value">${value}</div></div>`).join('');
+ const body=document.getElementById('managerBody');if(!data.length){body.innerHTML='<tr><td colspan="6" class="empty">Nenhuma compra cadastrada.</td></tr>';return}
+ body.innerHTML=data.map(x=>{const r=x.products.filter(p=>p.status==='recebido').length,p=x.products.length-r,pct=x.products.length?Math.round(r/x.products.length*100):0,s=purchaseStatus(x);return `<tr><td><b>${esc(x.fornecedor)}</b><br><span class="muted">Compra ${fmt(x.dataCompra)}</span></td><td>${fmt(x.dataPrevista)}</td><td>${r}</td><td>${p}</td><td><b>${pct}%</b><div class="progress"><span style="width:${pct}%"></span></div></td><td class="${s.key==='late'?'late':s.key==='ontime'?'ontime':s.key==='done'?'done':''}">${s.label}</td></tr>`}).join('');
+}
+function renderHistory(){
+ const t=totals();document.getElementById('stCompras').textContent=data.length;document.getElementById('stItens').textContent=t.total;document.getElementById('stRecebidos').textContent=t.rec;document.getElementById('stPendencias').textContent=t.pend;const box=document.getElementById('historyBox');if(!data.length){box.innerHTML='<div class="empty">Nenhuma compra cadastrada ainda.</div>';return}
+ box.innerHTML=data.map(x=>{const r=x.products.filter(p=>p.status==='recebido').length,n=x.products.length-r,s=purchaseStatus(x);const cls=s.key==='done'?'okbg':s.key==='late'?'badbg':s.key==='ontime'?'warnbg':'graybg';return `<div class="card" style="margin:10px 0;padding:14px"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><div><b>${esc(x.fornecedor)}</b><br><span class="muted">${fmt(x.dataCompra)} ${x.responsavel?'• '+esc(x.responsavel):''} ${x.dataPrevista?'• Previsão '+fmt(x.dataPrevista):''}</span></div><div><span class="badge">${r}/${x.products.length} recebidos</span> <span class="badge ${cls}">${s.label}</span></div></div>${n?`<div style="margin-top:12px"><b style="color:#b45309">Pendências:</b> ${x.products.filter(p=>p.status!=='recebido').map(p=>esc(p.name)+' ('+p.qty+' '+esc(p.unit)+')').join(', ')}</div>`:'<div style="margin-top:12px;color:#15803d;font-weight:700">✅ Compra recebida integralmente</div>'}${x.receipts.length?`<div class="receipt-log"><b>Recebimentos finalizados:</b>${x.receipts.slice().reverse().map(a=>`<div>${fmtDateTime(a.date)} — ${a.total} comprados → ${a.received} recebidos → ${a.pending} pendentes</div>`).join('')}</div>`:''}<div class="right" style="margin-top:10px">${n?`<button class="btn small" onclick="openPurchase(${x.id})">Abrir conferência</button> `:''}<button class="btn danger small" onclick="deletePurchase(${x.id})">Excluir</button></div></div>`}).join('');
+}
+function openPurchase(id){currentPurchaseId=Number(id);showPage('recebimento');}
+function deletePurchase(id){if(confirm('Excluir esta compra?')){data=data.filter(x=>x.id!==id);persist();renderHistory();renderDashboard();renderSelect();}}
+renderHistory();renderDashboard();
+</script>
+</body></html>
